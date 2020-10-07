@@ -443,6 +443,8 @@ parPartToInlines' (Field info runs) =
   case info of
     HyperlinkField url -> parPartToInlines' $ ExternalHyperLink url runs
     UnknownField -> smushInlines <$> mapM runToInlines runs
+parPartToInlines' (SimpleField parParts) =
+  smushInlines <$> mapM parPartToInlines' parParts
 parPartToInlines' NullParPart = return mempty
 
 isAnchorSpan :: Inline -> Bool

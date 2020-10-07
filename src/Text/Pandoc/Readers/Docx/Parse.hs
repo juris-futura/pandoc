@@ -285,6 +285,7 @@ data ParPart = PlainRun Run
              | Chart                                              -- placeholder for now
              | PlainOMath [Exp]
              | Field FieldInfo [Run]
+             | SimpleField [ParPart]
              | NullParPart      -- when we need to return nothing, but
                                 -- not because of an error.
              deriving Show
@@ -845,6 +846,9 @@ elemToParPart ns element
 elemToParPart ns element
   | isElem ns "m" "oMath" element =
     fmap PlainOMath (eitherToD $ readOMML $ T.pack $ showElement element)
+elemToParPart ns element
+  | isElem ns "w" "fldSimple" element =
+      SimpleField <$> mapD (elemToParPart ns) (elChildren element)
 elemToParPart _ _ = throwError WrongElem
 
 elemToCommentStart :: NameSpaces -> Element -> D ParPart
